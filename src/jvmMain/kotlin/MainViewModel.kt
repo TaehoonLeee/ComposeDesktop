@@ -7,6 +7,8 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.json.*
 import network.ApiExecutor
 import network.Distribution
@@ -34,6 +36,8 @@ class MainViewModel {
 
     private val _l10nData = mutableStateMapOf<String, Map<String, JsonElement>>()
     val l10nData: Map<String, Map<String, JsonElement>> get() = _l10nData
+
+    val searchKeyEvent: SharedFlow<Unit> = MutableSharedFlow<Unit>()
 
     private val jsonParserClient = HttpClient(CIO)
     suspend fun fetch(phase: String = "dev") {
@@ -71,5 +75,9 @@ class MainViewModel {
 
     fun onClickBackButton() {
         content = MainContent.FileList
+    }
+
+    suspend fun onSearchKeyEvent() {
+        (searchKeyEvent as MutableSharedFlow<Unit>).emit(Unit)
     }
 }
